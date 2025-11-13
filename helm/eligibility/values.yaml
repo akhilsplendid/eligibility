@@ -1,5 +1,5 @@
 image:
-  repository: your-registry/eligibility
+  repository: ghcr.io/akhilsplendid/eligibility
   tag: latest
   pullPolicy: IfNotPresent
 service:
@@ -7,5 +7,8 @@ service:
   targetPort: 8083
 replicaCount: 1
 monitoring:
-  enabled: false
+  enabled: true
   interval: 30s
+hazelcast:
+  enabled: true
+  port: 5701

@@ -1,23 +1,21 @@
 hazelcast:
-  instance-name: eligibility-hz
+  instance-name: eligibility-hz-local
   cluster-name: eligibility-cluster
   network:
     join:
       multicast:
         enabled: false
-      kubernetes:
+      tcp-ip:
         enabled: true
-        namespace: default
-        service-name: eligibility-hazelcast
-        service-dns: eligibility-hazelcast.default.svc.cluster.local
-        service-port: 5701
+        member-list:
+          - 127.0.0.1
     port:
       auto-increment: true
       port: 5701
   map:
     eligibility:
       time-to-live-seconds: 60
-      backup-count: 1
+      backup-count: 0
       async-backup-count: 0
       max-idle-seconds: 300
       eviction:
@@ -26,3 +24,4 @@ hazelcast:
         size: 10000
   management-center:
     scripting-enabled: false
+    console-enabled: true

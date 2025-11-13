@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  eligibility:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ghcr.io/akhilsplendid/eligibility:latest
+    container_name: eligibility-service
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_PROFILES_ACTIVE=local
+      - HAZELCAST_CONFIG=classpath:hazelcast.yaml
+    networks:
+      - eligibility-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8083/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    depends_on:
+      hazelcast-management:
+        condition: service_started
+
+  hazelcast-management:
+    image: hazelcast/management-center:5.4.0
+    container_name: hazelcast-management-center
+    ports:
+      - "8080:8080"
+    environment:
+      - MC_DEFAULT_CLUSTER=eligibility-cluster
+      - MC_DEFAULT_CLUSTER_MEMBERS=eligibility:5701
+    networks:
+      - eligibility-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+networks:
+  eligibility-network:
+    driver: bridge

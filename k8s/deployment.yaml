@@ -14,10 +14,25 @@ spec:
     spec:
       containers:
         - name: eligibility
-          image: your-registry/eligibility:latest
+          image: ghcr.io/akhilsplendid/eligibility:latest
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 8083
+            - name: http
+              containerPort: 8083
+            - name: hazelcast
+              containerPort: 5701
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8083
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8083
+            initialDelaySeconds: 30
+            periodSeconds: 10
 ---
 apiVersion: v1
 kind: Service
@@ -27,5 +42,19 @@ spec:
   selector:
     app: eligibility
   ports:
-    - port: 80
+    - name: http
+      port: 80
       targetPort: 8083
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: eligibility-hazelcast
+spec:
+  clusterIP: None
+  selector:
+    app: eligibility
+  ports:
+    - name: hazelcast
+      port: 5701
+      targetPort: 5701

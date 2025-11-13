@@ -19,7 +19,10 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - containerPort: {{ .Values.service.targetPort }}
+            - name: http
+              containerPort: {{ .Values.service.targetPort }}
+            - name: hazelcast
+              containerPort: 5701
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
