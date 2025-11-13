@@ -1,0 +1,11 @@
+spring:
+  cache:
+    type: hazelcast
+
+hazelcast:
+  config: classpath:hazelcast-test.yaml
+
+logging:
+  level:
+    root: INFO
+    com.example.eligibility: DEBUG
